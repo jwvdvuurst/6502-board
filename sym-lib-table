@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "6502-board-local") (type "KiCad") (uri "${KIPRJMOD}/6502-board-local.kicad_sym") (options "") (descr "WDC CPU/VIA and local SRAM/logic symbols for 6502-board"))
+)
