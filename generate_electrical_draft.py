@@ -184,6 +184,7 @@ def symbol_instance(
     library_id="6502-board-local",
     in_bom=True,
     on_board=True,
+    function=None,
 ):
     instance_uuid = new_uuid()
     lines = [
@@ -195,6 +196,11 @@ def symbol_instance(
         f'    (property "Footprint" "{footprint}" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))',
         f'    (property "Datasheet" "{datasheet}" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))',
     ]
+    if function is not None:
+        lines.append(
+            f'    (property "Function" "{function}" (at 0 0 0) '
+            '(effects (font (size 1.27 1.27)) (hide yes)))'
+        )
     for number, *_ in pins:
         lines.append(f'    (pin "{number}" (uuid "{new_uuid()}"))')
     lines.extend(
@@ -626,7 +632,7 @@ for name, reference, unit, x, y, function, mapping in logic_units:
         symbol_instance(
             name,
             reference,
-            f"{name} - {function}",
+            name,
             x,
             y,
             pins,
@@ -636,6 +642,7 @@ for name, reference, unit, x, y, function, mapping in logic_units:
             12,
             unit,
             show_value=unit == 1,
+            function=function,
         )
     )
     for _, pin_name, pin_x, pin_y, angle in pins:
@@ -654,7 +661,7 @@ for name, reference, unit, x, y, mapping in logic_unused_units:
         symbol_instance(
             name,
             reference,
-            f"{name} unused gate",
+            name,
             x,
             y,
             pins,
@@ -665,6 +672,7 @@ for name, reference, unit, x, y, mapping in logic_unused_units:
             unit,
             show_reference=False,
             show_value=False,
+            function="unused gate",
         )
     )
     for _, pin_name, pin_x, pin_y, angle in pins:
@@ -694,7 +702,7 @@ for index, (reference, name) in enumerate(logic_packages.items()):
         symbol_instance(
             name,
             reference,
-            f"{name} power",
+            name,
             x,
             y,
             pins,
@@ -705,6 +713,7 @@ for index, (reference, name) in enumerate(logic_packages.items()):
             unit,
             show_reference=False,
             show_value=False,
+            function="power",
         )
     )
     for _, pin_name, pin_x, pin_y, angle in pins:
@@ -919,7 +928,7 @@ add_component(
     label_offset=7.62,
 )
 add_component(
-    "C", "Device", "C19", "10uF - 3V3 bulk bypass", 465.0, 112.0,
+    "C", "Device", "C21", "10uF - 3V3 bulk bypass", 465.0, 112.0,
     "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm",
     "", {"1": "+3V3", "2": "GND"},
     label_offset=7.62,
@@ -1108,7 +1117,7 @@ sheet = f"""(kicad_sch
   (text "U4/U9 decode address pages. Socketed DIP U10/U12 generate RAM select and PHI2-qualified active-low CE/OE/WE; OE and WE are mutually exclusive." (exclude_from_sim no) (at 20 258 0) (effects (font (size 1.1 1.1)) (justify left bottom)) (uuid "{new_uuid()}"))
   (text "Socketed DIP U15-U16 and U18 generate bank-window select, qualified bank-register writes and PHI2-qualified VIA CS1; VIA CS2_N is tied low." (exclude_from_sim no) (at 20 264 0) (effects (font (size 1.1 1.1)) (justify left bottom)) (uuid "{new_uuid()}"))
   (text "Text screen: reserve SRAM $7800-$7FFF as a 25x80 row-major character buffer; ROM sends it to the Pico through the VIA. No character ROM or video hardware." (exclude_from_sim no) (at 20 270 0) (effects (font (size 1.1 1.1)) (justify left bottom)) (uuid "{new_uuid()}"))
-  (text "Power: J1 accepts externally regulated +3V3 only; no regulator is fitted. C19 is bulk bypass; C4-C18 are IC bypass capacitors." (exclude_from_sim no) (at 20 276 0) (effects (font (size 1.1 1.1)) (justify left bottom)) (uuid "{new_uuid()}"))
+  (text "Power: J1 accepts externally regulated +3V3 only; no regulator is fitted. C21 is bulk bypass; C4-C19 are IC bypass capacitors." (exclude_from_sim no) (at 20 276 0) (effects (font (size 1.1 1.1)) (justify left bottom)) (uuid "{new_uuid()}"))
   (text "Clock: 1.000MHz crystal with socketed 74HCU04 Pierce oscillator, series drive resistor and buffer. Verify crystal startup and CPU clock limits on hardware." (exclude_from_sim no) (at 20 282 0) (effects (font (size 1.1 1.1)) (justify left bottom)) (uuid "{new_uuid()}"))
   (text "Reset: pull-up, 100nF power-on delay and pushbutton; CPU RDY/NMI/BE/SO and IRQ have defined pull-ups. Validate reset timing from the exact CPU datasheet." (exclude_from_sim no) (at 20 288 0) (effects (font (size 1.1 1.1)) (justify left bottom)) (uuid "{new_uuid()}"))
   (text "Pico is external: J2 pins 1-8 GP0-GP7, 9 REQ, 10 ACK, 11 DIR, 12 OE_N, 13-14 GND. Pico is separately USB-powered; provide common ground." (exclude_from_sim no) (at 20 294 0) (effects (font (size 1.1 1.1)) (justify left bottom)) (uuid "{new_uuid()}"))

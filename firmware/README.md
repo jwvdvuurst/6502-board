@@ -1,7 +1,7 @@
 # 6502 board ROM
 
 Boots the W65C02S into a monitor, with Bob Applegate's Tiny BASIC also resident
-in the same 8 KiB ROM. The Pico firmware is a separate, future deliverable.
+in the same 8 KiB ROM. The [Pico C firmware](../pico/README.md) is built separately.
 The software interface it must implement is specified in [PROTOCOL.md](PROTOCOL.md).
 
 ## Build and outputs
@@ -129,7 +129,8 @@ bank selection, dumping, Intel HEX checksums/types/address bounds, loaded code
 and RTS, BASIC arithmetic/LIST/RUN/EXIT/Escape, scrolling, display/SRAM parity,
 overlong input, and cold start with nonzero RAM. Tests are instruction-level;
 they do not establish electrical timing, metastability margins, USB behavior,
-or operation on physical hardware. The Pico program has not been implemented.
+or operation on physical hardware. The Pico implementation has separate portable
+C tests and a test replaying actual ROM output bytes; physical integration is untested.
 
 Test dependency source commit: `dca469ab95e38a3fa1a63e95be2f65aa155dc86d`.
 To restore test tools in a fresh checkout, clone that repository into

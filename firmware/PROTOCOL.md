@@ -1,6 +1,6 @@
 # ROM/Pico interface v1
 
-This is the contract for the later Pico firmware. The ROM does not implement
+This is the contract implemented by [the Pico C firmware](../pico/README.md). The ROM does not implement
 USB; it uses the W65C22S at `$C100`. The Pico cannot directly address SRAM.
 The 6502 scans its text buffer and sends display records; the Pico reconstructs
 the screen and renders it over USB CDC. There is no video hardware.
@@ -55,7 +55,9 @@ machine; stream framing alone does not prove electrical reset safety.
 
 Output bytes are **SLIP framed**. `$C0` begins/ends a record. Within a record,
 encode `$C0` as `$DB $DC`, and `$DB` as `$DB $DD`. Consecutive delimiters
-are harmless. Reset/disconnect must clear the decoder. At each delimiter,
+are harmless. Pico reset or a known parallel-link disconnect must clear the
+decoder. USB CDC open/close retains the parallel decoder and shadow screen
+because the 6502 can keep transmitting independently of a host terminal. At each delimiter,
 reject incomplete/unknown records and begin a new record. This permits recovery
 after a truncated frame without treating a payload byte as a command.
 

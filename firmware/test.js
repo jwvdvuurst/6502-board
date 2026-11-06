@@ -8,8 +8,10 @@ function machine(input,options={}) {
  const io=Buffer.alloc(16),keys=[...Buffer.from(input)],frames=[];
  let bank=0,ack=false,request=false,pending=false,frame=[],transfers=0;
  const display=Buffer.alloc(2000,32);
+ const trace=[];
  let escaped=false;
  function output(byte){
+  if(process.env.ROM_PICO_TRACE)trace.push(byte);
   if(byte===0xc0){
    if(frame.length){processRecord();frame=[];}
    escaped=false;return;
@@ -73,6 +75,7 @@ function machine(input,options={}) {
  }catch(e){if(e!==WAIT){console.error('PC',cpu.getState().pc.toString(16),'screen',ram.subarray(0x7800,0x7fd0).toString());throw e;}}
  assert.equal(keys.length,0);assert.equal(frame.length,0,'truncated frame');
  assert.deepEqual(display,ram.subarray(0x7800,0x7fd0),'Pico display differs from SRAM screen');
+ if(process.env.ROM_PICO_TRACE)fs.writeFileSync(process.env.ROM_PICO_TRACE,Buffer.from(trace));
  return {ram,frames,bank,steps,transfers,screen:ram.subarray(0x7800,0x7fd0).toString()};
 }
 function ihex(addr,data,type=0){const b=[data.length,addr>>8,addr&255,type,...data];b.push((-b.reduce((a,b)=>a+b,0))&255);return ':'+Buffer.from(b).toString('hex').toUpperCase()+'\r';}

@@ -317,8 +317,12 @@ The implemented handshake holds ACK high until REQ falls, then waits for ACK
 to fall before starting another byte. This supersedes the proposed ACK pulses
 above. The VIA register modes and software state machine are tested with an
 instruction-level WDC 65C02 emulator and a VIA/Pico model. Electrical timing,
-reset recovery, and physical hardware remain to be validated. Pico firmware
-will be implemented separately against the documented contract.
+reset recovery, and physical hardware remain to be validated.
+[Pico firmware](pico/README.md) now implements the contract in C using Pico SDK
+and TinyUSB, with a nonblocking GPIO handshake, buffered USB input, SLIP
+decoding, and ANSI screen rendering. Its UF2 builds, portable C tests pass,
+and the C decoder has been tested with output from the emulated ROM. No
+physical Pico/main-board integration has been tested.
 
 ## Initial hardware blocks
 
